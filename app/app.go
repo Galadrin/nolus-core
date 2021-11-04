@@ -1,6 +1,7 @@
 package app
 
 import (
+	nomoante "gitlab-nomo.credissimo.net/nomo/cosmzone/custom/auth/ante"
 	"io"
 	"net/http"
 	"os"
@@ -88,6 +89,9 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
+	treasurymodule "gitlab-nomo.credissimo.net/nomo/cosmzone/x/treasury"
+	treasurymodulekeeper "gitlab-nomo.credissimo.net/nomo/cosmzone/x/treasury/keeper"
+	treasurymoduletypes "gitlab-nomo.credissimo.net/nomo/cosmzone/x/treasury/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -167,6 +171,7 @@ var (
 		transfer.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		vesting.AppModuleBasic{},
+		treasurymodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -237,6 +242,7 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
+	TreasuryKeeper treasurymodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -270,6 +276,7 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, wasm.StoreKey,
+		treasurymoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -403,6 +410,14 @@ func New(
 	//if len(enabledProposals) != 0 {
 	//	govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledProposals))
 	//}
+
+	app.TreasuryKeeper = *treasurymodulekeeper.NewKeeper(
+		appCodec,
+		keys[treasurymoduletypes.StoreKey],
+		keys[treasurymoduletypes.MemStoreKey],
+	)
+	treasuryModule := treasurymodule.NewAppModule(appCodec, app.TreasuryKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -442,6 +457,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
+		treasuryModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -472,6 +488,7 @@ func New(
 		minttypes.ModuleName,
 		crisistypes.ModuleName,
 		ibchost.ModuleName,
+		treasurymoduletypes.ModuleName, // teasury module must be initialized before the genutil
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -493,12 +510,12 @@ func New(
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 
-	anteHandler, err := ante.NewAnteHandler(
-		ante.HandlerOptions{
+	anteHandler, err := nomoante.NewAnteHandler(
+		nomoante.HandlerOptions{
 			AccountKeeper:   app.AccountKeeper,
 			BankKeeper:      app.BankKeeper,
+			TreasuryKeeper:  app.TreasuryKeeper,
 			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
-			FeegrantKeeper:  nil,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 		},
 	)
@@ -665,6 +682,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
+	paramsKeeper.Subspace(treasurymoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
