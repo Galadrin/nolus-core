@@ -48,7 +48,7 @@ func (k Keeper) AddProceeds(ctx sdk.Context, delta sdk.Coins) {
 	if genState.FeeProceeds == nil {
 		genState.FeeProceeds = sdk.NewCoins()
 	}
-	genState.FeeProceeds.Add(delta...)
+	genState.FeeProceeds = genState.FeeProceeds.Add(delta...)
 	k.Logger(ctx).Info(fmt.Sprintf("New fee proceeds state: %s", genState.FeeProceeds))
 	k.SetParams(ctx, genState)
 }
