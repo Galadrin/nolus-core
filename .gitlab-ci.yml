@@ -98,6 +98,7 @@ test-fuzzer:on-schedule:
   tags:
     - test
   extends: .go-build
+  needs: ["download-wasmvm-lib"]
   stage: test
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
