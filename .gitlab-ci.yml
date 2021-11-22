@@ -103,4 +103,4 @@ test-unit-cosmos:
   # rules:
   #   - if: $CI_PIPELINE_SOURCE == "schedule"
   script:
-    - make test-unit-cosmos
+    - pwd && ls -lah . && make test-unit-cosmos
