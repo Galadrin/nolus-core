@@ -2,6 +2,7 @@ include:
   - '.cicd/kaniko.yml'
   # - '.cicd/go-build.yml'
   - '.cicd/go-test.yml'
+  - '.cicd/image-exists.yml'
 
 stages:
   - prep
@@ -26,31 +27,22 @@ variables:
   NOLUS_INTEGRATION_TAG: "0.9"
   NOLUS_INTEGRATION_IMAGE: "${CI_OCI_REGISTRY}/${NOLUS_INTEGRATION_REPO}:${NOLUS_INTEGRATION_TAG}"
 
-prep-builder:check-exist:
-  stage: prep
-  image:
-    name: amazon/aws-cli
-    entrypoint: [""]
-  script:
-    - if aws ecr-public describe-images --registry-id $AWS_REGISTRY_ID 
-          --repository-name $NOLUS_BUILDER_REPO --region us-east-1 
-          --image-ids=imageTag=$NOLUS_BUILDER_TAG ; 
-      then
-        echo "NOLUS_BUILDER_EXISTS=true" >> builder_exists.env ;
-      fi
-  artifacts:
-    reports:
-      dotenv: builder_exists.env
-
 #ref: https://github.com/GoogleContainerTools/kaniko
 prep-builder:
   stage: prep
-  needs: ["prep-builder:check-exist"]
-  extends: .kaniko
+  needs: []
   variables:
+    IMAGE_REGISTRY_ID: ${AWS_REGISTRY_ID}
+    IMAGE_REPO: ${NOLUS_BUILDER_REPO}
+    IMAGE_TAG: ${NOLUS_BUILDER_TAG}
+    IMAGE_EXISTS_VARIABLE: NOLUS_BUILDER_EXISTS
     KANIKO_DOCKER_FILE: build/builder_spec
     KANIKO_IMAGE: ${NOLUS_BUILDER_IMAGE}
-    KANIKO_IMAGE_EXISTS: ${NOLUS_BUILDER_EXISTS}
+    KANIKO_IMAGE_EXISTS: NOLUS_BUILDER_EXISTS
+  extends: 
+    - .go-cache-vars
+    - .image-exists
+    - .kaniko
 
 download-wasmvm-lib:
   stage: build
@@ -82,20 +74,34 @@ build-binary:
 build-image:
   stage: build
   needs: ["build-binary"]
-  extends: .kaniko
   variables:
+    IMAGE_REGISTRY_ID: ${AWS_REGISTRY_ID}
+    IMAGE_REPO: ${NOLUS_NODE_REPO}
+    IMAGE_TAG: ${NOLUS_NODE_TAG}
+    IMAGE_EXISTS_VARIABLE: NOLUS_NODE_EXISTS
     KANIKO_DOCKER_FILE: build/node_spec
     KANIKO_IMAGE: ${NOLUS_NODE_IMAGE}
-    KANIKO_IMAGE_EXISTS: ${NOLUS_NODE_EXISTS}
+    KANIKO_IMAGE_EXISTS: NOLUS_NODE_EXISTS
+  extends: 
+    - .go-cache-vars
+    - .image-exists
+    - .kaniko
 
 build-integration:
   stage: build
   needs: ["build-binary"]
-  extends: .kaniko
   variables:
+    IMAGE_REGISTRY_ID: ${AWS_REGISTRY_ID}
+    IMAGE_REPO: ${NOLUS_INTEGRATION_REPO}
+    IMAGE_TAG: ${NOLUS_INTEGRATION_TAG}
+    IMAGE_EXISTS_VARIABLE: NOLUS_INTEGRATION_EXISTS
     KANIKO_DOCKER_FILE: build/integration_spec
     KANIKO_IMAGE: ${NOLUS_INTEGRATION_IMAGE}
-    KANIKO_IMAGE_EXISTS: ${NOLUS_INTEGRATION_EXISTS}
+    KANIKO_IMAGE_EXISTS: NOLUS_INTEGRATION_EXISTS
+  extends: 
+    - .go-cache-vars
+    - .image-exists
+    - .kaniko
 
 test-fuzzer:on-schedule:
   extends: .go-test
@@ -109,7 +115,6 @@ test-unit-cosmos:on-schedule:
 
 test-integration:
   stage: test
-  needs: ["build-integration"]
   image: "${NOLUS_INTEGRATION_IMAGE}"
   script:
     - make test-integration

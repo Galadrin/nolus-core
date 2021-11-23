@@ -1,0 +1,12 @@
+.image-exists:
+  stage: prep
+  image:
+    name: amazon/aws-cli
+    entrypoint: [""]
+  script:
+    - if aws ecr-public describe-images --registry-id $IMAGE_REGISTRY_ID 
+          --repository-name $IMAGE_REPO --region us-east-1 
+          --image-ids=imageTag=$IMAGE_TAG ; 
+      then
+        export $IMAGE_EXISTS_VARIABLE="true"
+      fi
