@@ -12,7 +12,7 @@ else
 	COSMOSSDK_PACKAGES=$(go list ./... | uniq)
 
 	# Exclude ledger from testing
-	COSMOSSDK_PACKAGES=$(echo "${COSMOSSDK_PACKAGES}" | fgrep -v ledger)
+	COSMOSSDK_PACKAGES=$(echo "${COSMOSSDK_PACKAGES}" | grep -v ledger)
 	
 	echo "Cosmos SDK packages:"
 	echo "$COSMOSSDK_PACKAGES"
