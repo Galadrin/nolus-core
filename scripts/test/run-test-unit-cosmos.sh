@@ -10,6 +10,10 @@ then
 else
 	cd "$COSMOSSDK_DIR"
 	COSMOSSDK_PACKAGES=$(go list ./... | uniq)
+
+	# Exclude ledger from testing
+	COSMOSSDK_PACKAGES=$(echo "${COSMOSSDK_PACKAGES}" | fgrep -v ledger)
+	
 	echo "Cosmos SDK packages:"
 	echo "$COSMOSSDK_PACKAGES"
 
