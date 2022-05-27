@@ -91,6 +91,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 
+	ibcclientclient "github.com/cosmos/ibc-go/v2/modules/core/02-client/client"
 	taxmodule "gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax"
 	taxmodulekeeper "gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax/keeper"
 	taxmoduletypes "gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax/types"
@@ -141,6 +142,12 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		distrclient.ProposalHandler,
 		upgradeclient.ProposalHandler,
 		upgradeclient.CancelProposalHandler,
+		paramsclient.ProposalHandler,
+		distrclient.ProposalHandler,
+		upgradeclient.ProposalHandler,
+		upgradeclient.CancelProposalHandler,
+		ibcclientclient.UpdateClientProposalHandler,
+		ibcclientclient.UpgradeProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 
