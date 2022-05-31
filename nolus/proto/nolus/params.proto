@@ -1,0 +1,12 @@
+syntax = "proto3";
+package cosmzone.nolus.nolus;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "gitlab-nomo.credissimo.net/momo/cosmzone/nolus/x/nolus/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
