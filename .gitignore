@@ -10,3 +10,5 @@ users/
 validators/
 coverage.txt
 .vscode/
+/cover.out
+/testreport.xml
