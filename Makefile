@@ -126,7 +126,7 @@ check-format:
 
 static-code-check:
 	go install honnef.co/go/tools/cmd/staticcheck@latest
-	$(GOBIN)/staticcheck -tags "muslc" ./...
+	$(GOPATH)/bin/staticcheck -tags "muslc" ./...
 
 examine-source-code:
 	go vet $(BUILD_FLAGS) $(PACKAGES)
@@ -136,11 +136,11 @@ test-unit-cosmos:
 
 test-unit:
 	go install gotest.tools/gotestsum@latest
-	$(GOBIN)/gotestsum --junitfile testreport.xml --format testname -- $(BUILD_FLAGS) -mod=readonly -coverprofile=cover.out -covermode=atomic ./...
+	$(GOPATH)/bin/gotestsum --junitfile testreport.xml --format testname -- $(BUILD_FLAGS) -mod=readonly -coverprofile=cover.out -covermode=atomic ./...
 
 test-unit-coverage: ## Generate global code coverage report
 	go install github.com/boumenot/gocover-cobertura@latest
-	$(GOBIN)/gocover-cobertura < cover.out > coverage.xml
+	$(GOPATH)/bin/gocover-cobertura < cover.out > coverage.xml
 
 test-unit-coverage-report: ## Generate global code coverage report in HTML
 	sh  ./scripts/test/coverage.sh html;
