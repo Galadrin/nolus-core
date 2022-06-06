@@ -2,8 +2,9 @@ package mint
 
 import (
 	"fmt"
-	"gitlab-nomo.credissimo.net/nomo/cosmzone/custom/util"
 	"time"
+
+	"gitlab-nomo.credissimo.net/nomo/cosmzone/custom/util"
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,7 +30,7 @@ func calcFunctionIncrement(nanoSecondsPassed int64) sdk.Dec {
 
 func calcFixedIncrement(nanoSecondsPassed int64) sdk.Dec {
 	timePassed := sdk.NewDec(nanoSecondsPassed).Quo(nanoSecondsInMonth)
-	return sdk.OneDec().Mul(timePassed)
+	return timePassed
 }
 
 func calcTimeDifference(blockTime int64, prevBlockTime int64, maxMintableSeconds int64) int64 {
