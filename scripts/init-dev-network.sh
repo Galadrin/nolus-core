@@ -2,6 +2,7 @@
 set -euxo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR"/check-parsers.sh
 source "$SCRIPT_DIR"/common/cmd.sh
 source "$SCRIPT_DIR"/internal/accounts.sh
 
