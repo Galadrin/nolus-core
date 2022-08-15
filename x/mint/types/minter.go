@@ -1,6 +1,7 @@
 package types
 
 import (
+	sdkmath "cosmossdk.io/math"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"gitlab-nomo.credissimo.net/nomo/cosmzone/custom/util"
@@ -17,7 +18,7 @@ var (
 
 // NewMinter returns a new Minter object with the given inflation and annual
 // provisions values.
-func NewMinter(normTimePassed sdk.Dec, totalMinted sdk.Int, prevBlockTimestamp int64) Minter {
+func NewMinter(normTimePassed sdk.Dec, totalMinted sdkmath.Int, prevBlockTimestamp int64) Minter {
 	return Minter{
 		NormTimePassed:     normTimePassed,
 		TotalMinted:        totalMinted,

@@ -12,18 +12,6 @@ import (
 
 func main() {
 	params.SetAddressPrefixes()
-	//cmdOptions := GetWasmCmdOptions()
-	//cmdOptions = append(cmdOptions, cosmoscmd.AddSubCmd(tmcmds.RollbackStateCmd))
-	//rootCmd, _ := cosmoscmd.NewRootCmd(
-	//	app.Name,
-	//	params.Bech32PrefixAccAddr,
-	//	app.DefaultNodeHome,
-	//	app.Name,
-	//	app.ModuleBasics,
-	//	app.New,
-	//	// this line is used by starport scaffolding # root/arguments
-	//	cmdOptions...,
-	//)
 	rootCmd, _ := NewRootCmd()
 	if err := svrcmd.Execute(rootCmd, "", app.DefaultNodeHome); err != nil {
 		os.Exit(1)
