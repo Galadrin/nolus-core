@@ -7,7 +7,7 @@
 
 ## Context and Problem Statement
 
-We cannot use wasm module, provided from the CosmWasm team via the library wasmd with the latest CosmosSdk versions +v0.43 - wasmd issue tracking number [#501](https://github.com/CosmWasm/wasmd/issues/501). Originally, CosmWasm were pushing to release wasmd version 1.0 in a state where it would have used a CosmWasm-VM version 1.0 while still being only CosmosSdk v0.42 compatible. However, after Cosmos Hub announced that they would migrate to v[0.44](https://github.com/cosmos/gaia/blob/main/docs/roadmap/cosmos-hub-roadmap-2.0.md) CosmWasm decided that they will release a version of wasmd which would be CosmosSDK v0.44 compatible and target a wasmd 1.0 release afterwards.
+We cannot use wasm module, provided from the CosmWasm team via the library wasmd with the latest CosmosSdk versions +v0.43 - wasmd issue tracking number [#501](https://github.com/vmierzhev/custom-wasmd/issues/501). Originally, CosmWasm were pushing to release wasmd version 1.0 in a state where it would have used a CosmWasm-VM version 1.0 while still being only CosmosSdk v0.42 compatible. However, after Cosmos Hub announced that they would migrate to v[0.44](https://github.com/cosmos/gaia/blob/main/docs/roadmap/cosmos-hub-roadmap-2.0.md) CosmWasm decided that they will release a version of wasmd which would be CosmosSDK v0.44 compatible and target a wasmd 1.0 release afterwards.
 
 Based on these observations, we need to decide how to proceed with the CosmWasm integration. The main routes we can take are:
 

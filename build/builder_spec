@@ -9,7 +9,7 @@ ENV BUILD_TAGS=${BUILD_TAGS:-muslc}
 ARG LINK_STATICALLY
 ENV LINK_STATICALLY=${LINK_STATICALLY:-true}
 
-#credit goes to https://github.com/CosmWasm/wasmd/blob/v0.27.0/Dockerfile for details on muslc build
+#credit goes to https://github.com/vmierzhev/custom-wasmd/blob/v0.27.0/Dockerfile for details on muslc build
 RUN set -eux; apk add --no-cache ca-certificates build-base;
 
 RUN apk add git

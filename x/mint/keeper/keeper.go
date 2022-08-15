@@ -4,6 +4,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkstoretypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gitlab-nomo.credissimo.net/nomo/cosmzone/x/mint/types"
@@ -12,7 +13,7 @@ import (
 // Keeper of the mint store
 type Keeper struct {
 	cdc              codec.BinaryCodec
-	storeKey         sdk.StoreKey
+	storeKey         sdkstoretypes.StoreKey
 	paramSpace       paramtypes.Subspace
 	bankKeeper       types.BankKeeper
 	feeCollectorName string
@@ -20,7 +21,7 @@ type Keeper struct {
 
 // NewKeeper creates a new mint Keeper instance
 func NewKeeper(
-	cdc codec.BinaryCodec, key sdk.StoreKey, paramSpace paramtypes.Subspace,
+	cdc codec.BinaryCodec, key sdkstoretypes.StoreKey, paramSpace paramtypes.Subspace,
 	ak types.AccountKeeper, bk types.BankKeeper,
 	feeCollectorName string,
 ) Keeper {

@@ -2,10 +2,10 @@ package keeper_test
 
 import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdktestutil "github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	"gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax/keeper"
 )
 
@@ -31,10 +31,10 @@ func (suite *KeeperTestSuite) TestTaxes() {
 	// Set account with insufficient funds
 	acc := suite.app.AccountKeeper.NewAccountWithAddress(suite.ctx, addr1)
 	suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
-	err = simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr1, sdk.NewCoins(sdk.NewCoin("atom", sdk.NewInt(10))))
+	err = testutil.FundAccount(suite.app.BankKeeper, suite.ctx, addr1, sdk.NewCoins(sdk.NewCoin("atom", sdk.NewInt(10))))
 	suite.Require().NoError(err)
 
-	dfd := ante.NewDeductFeeDecorator(suite.app.AccountKeeper, suite.app.BankKeeper, nil)
+	dfd := ante.NewDeductFeeDecorator(suite.app.AccountKeeper, suite.app.BankKeeper, nil, nil)
 	dtd := keeper.NewDeductTaxDecorator(suite.app.AccountKeeper, suite.app.BankKeeper, suite.app.TaxKeeper)
 	antehandler := sdk.ChainAnteDecorators(dfd, dtd)
 
@@ -46,7 +46,7 @@ func (suite *KeeperTestSuite) TestTaxes() {
 
 	// Set account with sufficient funds
 	suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
-	err = simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr1, sdk.NewCoins(sdk.NewCoin("atom", sdk.NewInt(200))))
+	err = testutil.FundAccount(suite.app.BankKeeper, suite.ctx, addr1, sdk.NewCoins(sdk.NewCoin("atom", sdk.NewInt(200))))
 	suite.Require().NoError(err)
 
 	_, err = antehandler(suite.ctx, tx, false)

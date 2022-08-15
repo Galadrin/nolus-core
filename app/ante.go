@@ -1,14 +1,14 @@
 package app
 
 import (
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdkstoretypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
+	wasmkeeper "github.com/vmierzhev/custom-wasmd/x/wasm/keeper"
+	wasmTypes "github.com/vmierzhev/custom-wasmd/x/wasm/types"
 	taxkeeper "gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax/keeper"
 	taxtypes "gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax/types"
 

@@ -1,6 +1,7 @@
 package params
 
 import (
+	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -28,7 +29,29 @@ var (
 	Bech32PrefixConsAddr = Bech32PrefixAccAddr + "valcons"
 	// Bech32PrefixConsPub defines the Bech32 prefix of a consensus node public key
 	Bech32PrefixConsPub = Bech32PrefixAccAddr + "valconspub"
+	// CustomConfigTemplate defines Nolus' custom application configuration TOML
+	// template. It extends the core SDK template.
+	CustomConfigTemplate = serverconfig.DefaultConfigTemplate + `
+###############################################################################
+###                        Custom Nolus Configuration                        ###
+###############################################################################
+# bypass-min-fee-msg-types defines custom message types the operator may set that
+# will bypass minimum fee checks during CheckTx.
+#
+# Example:
+# ["/ibc.core.channel.v1.MsgRecvPacket", "/ibc.core.channel.v1.MsgAcknowledgement", ...]
+bypass-min-fee-msg-types = [{{ range .BypassMinFeeMsgTypes }}{{ printf "%q, " . }}{{end}}]
+`
 )
+
+// CustomAppConfig defines Nolus' custom application configuration.
+type CustomAppConfig struct {
+	serverconfig.Config
+
+	// BypassMinFeeMsgTypes defines custom message types the operator may set that
+	// will bypass minimum fee checks during CheckTx.
+	BypassMinFeeMsgTypes []string `mapstructure:"bypass-min-fee-msg-types"`
+}
 
 func init() {
 	SetAddressPrefixes()

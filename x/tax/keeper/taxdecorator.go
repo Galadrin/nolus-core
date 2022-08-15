@@ -78,7 +78,7 @@ func ApplyTax(feeRate sdk.Dec, feeCoins sdk.Coins) (sdk.Coins, sdk.Coins, error)
 		taxFees = taxFees.Add(taxFee)
 	}
 
-	remainingFees, neg := feeCoins.SafeSub(taxFees)
+	remainingFees, neg := feeCoins.SafeSub(taxFees...)
 	if neg {
 		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "ApplyTax: insufficient fees; got: %s required: %s", feeCoins, taxFees)
 	}

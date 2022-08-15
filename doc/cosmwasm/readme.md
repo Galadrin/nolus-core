@@ -7,7 +7,7 @@ Pieces related to CosmWasm contracts:
 - [CosmWasmVM](https://github.com/CosmWasm/cosmwasm/tree/main/packages/vm) which is a Rust wrapper around Wasmer. This provides a WASM runtime(virtual machine) to execute smart contracts.
 - [CosmWasmStd](https://github.com/CosmWasm/cosmwasm/tree/main/packages/std) which is the "standard" library which is compiled with the smart contract.
 - The [wasmvm](https://github.com/CosmWasm/wasmvm) Go package, which is a Go wrapper around CosmWasmVM
-- [wasmd](https://github.com/CosmWasm/wasmd) which contains Cosmos SDK modules for running CosmWasm smart contracts in `x/wasm`.
+- [wasmd](https://github.com/vmierzhev/custom-wasmd) which contains Cosmos SDK modules for running CosmWasm smart contracts in `x/wasm`.
 
 In Ethereum the arguments to the contructor of a contract are passed alongside the code deploy transaction. This results in a contract instance being created.
 This is not the case in CosmWasm where code deployment and contract instantiation are separate.
@@ -19,11 +19,11 @@ Contract address is created along with some initial contract state.
 - `MsgExecuteContract` - Sent to make a call to a smart contract.
 - `MsgMigrateContract` - Sent by an admin that was stored in the contract on instantiation to upgrade or downgrade a contract. This message contains a `CodeId` of the new contract code. The contract's `migrate` function will perform any needed storage data transformations.
 
-Message definitions and description can be found [here](https://github.com/CosmWasm/wasmd/blob/master/proto/cosmwasm/wasm/v1/tx.proto).
+Message definitions and description can be found [here](https://github.com/vmierzhev/custom-wasmd/blob/master/proto/cosmwasm/wasm/v1/tx.proto).
 
-Message handling before calling into the CosmWasmVM can be found [here](https://github.com/CosmWasm/wasmd/blob/master/x/wasm/keeper/keeper.go).
+Message handling before calling into the CosmWasmVM can be found [here](https://github.com/vmierzhev/custom-wasmd/blob/master/x/wasm/keeper/keeper.go).
 
-The interface of the CosmWasmVM can be found [here](https://github.com/CosmWasm/wasmd/blob/master/x/wasm/types/wasmer_engine.go).
+The interface of the CosmWasmVM can be found [here](https://github.com/vmierzhev/custom-wasmd/blob/master/x/wasm/types/wasmer_engine.go).
 
 CosmWasm contracts expose the following functions:
 ```
