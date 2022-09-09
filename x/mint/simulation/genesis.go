@@ -18,7 +18,7 @@ const (
 	MaxMintableNanoseconds = "MaxMintableNanoseconds"
 )
 
-// GenInflation randomized Inflation
+// GenMaxMintableNanoseconds generates random MaxMintableNanoseconds in range [1-60)
 func GenMaxMintableNanoseconds(r *rand.Rand) int64 {
 	return time.Second.Nanoseconds() * int64(r.Intn(59)+1)
 }

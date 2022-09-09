@@ -8,7 +8,7 @@ import (
 	"gitlab-nomo.credissimo.net/nomo/cosmzone/x/mint/simulation"
 )
 
-func TestParamChangest(t *testing.T) {
+func TestParamChanges(t *testing.T) {
 	s := rand.NewSource(1)
 	r := rand.New(s)
 
