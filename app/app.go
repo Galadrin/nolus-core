@@ -104,6 +104,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 
+	// Neutron
 	"github.com/neutron-org/neutron/wasmbinding"
 	"github.com/neutron-org/neutron/x/interchainqueries"
 	interchainquerieskeeper "github.com/neutron-org/neutron/x/interchainqueries/keeper"
@@ -112,6 +113,7 @@ import (
 	interchaintxskeeper "github.com/neutron-org/neutron/x/interchaintxs/keeper"
 	interchaintxstypes "github.com/neutron-org/neutron/x/interchaintxs/types"
 	transferSudo "github.com/neutron-org/neutron/x/transfer"
+	neturontransferkeeperwrapper "github.com/neutron-org/neutron/x/transfer/keeper"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -443,8 +445,21 @@ func New(
 		app.BankKeeper,
 		app.ScopedTransferKeeper,
 	)
+
+	wrappedTransferKeeper := neturontransferkeeperwrapper.NewKeeper(
+		appCodec,
+		keys[ibctransfertypes.StoreKey],
+		app.GetSubspace(ibctransfertypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.ScopedTransferKeeper,
+	)
+
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
-	transferIBCModule := transferSudo.NewIBCModule(app.TransferKeeper, &app.WasmKeeper)
+	transferIBCModule := transferSudo.NewIBCModule(wrappedTransferKeeper, &app.WasmKeeper)
 
 	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -489,6 +504,7 @@ func New(
 		keys[interchaintxstypes.StoreKey],
 		memKeys[interchaintxstypes.MemStoreKey],
 		app.GetSubspace(interchaintxstypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
 		&app.WasmKeeper,
 		app.ICAControllerKeeper,
 		app.ScopedInterchainTxsKeeper,
