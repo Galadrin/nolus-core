@@ -22,9 +22,12 @@ variables:
   container: "docker"
   ARTIFACT_BIN: "nolus.tar.gz"
   ARTIFACT_SCRIPTS: "scripts.tar.gz"
+  # TODO consider determining the last one dynamically from the GitLab API
+  CONTRACTS_VERSION: "v0.1.15"
+  CONTRACTS_DIR: "artifacts"
 
   NOLUS_BUILDER_REPO: "builder"
-  NOLUS_BUILDER_TAG: "0.4"
+  NOLUS_BUILDER_TAG: "0.7"
   NOLUS_BUILDER_IMAGE: "${CI_OCI_REGISTRY}/${NOLUS_BUILDER_REPO}:${NOLUS_BUILDER_TAG}"
 
   NOLUS_NODE_REPO: "node"
@@ -80,6 +83,8 @@ build-binary:
     - .go-build
   script:
     - make build
+    - echo "Ensuring binary is statically linked ..." 
+        && (file target/release/nolusd | grep "statically linked")
     - tar -C target/release/ -czvf $ARTIFACT_BIN .
   artifacts:
     name: "nolusd-$CI_COMMIT_REF_SLUG"
@@ -133,25 +138,32 @@ setup-dev-network:
     entrypoint: [ "" ]
   variables:
     ACCOUNTS_DIR: accounts
+    CONTRACTS_INFO_FILE: "contracts-info.json"
   script:
     - echo "BUILD_NOLUS_VERSION=$BUILD_NOLUS_VERSION"
     - if [[ $BUILD_NOLUS_VERSION == "true" ]] ;
       then
-        yum install -y tar gzip jq ;
+        set -euox pipefail ;
+        yum install -y tar gzip unzip jq ;
         tar -xvf $ARTIFACT_BIN ;
         export PATH="$(pwd)":$PATH ;
+
+        ./.cicd/download_wasm.sh $CONTRACTS_VERSION ;
         ./scripts/init-dev-network.sh --artifact-bin $ARTIFACT_BIN --artifact-scripts $ARTIFACT_SCRIPTS
-              --chain-id nolus-dev-1 -v 3 --validator_accounts_dir "$ACCOUNTS_DIR"
-              --user-dir "$ACCOUNTS_DIR" --treasury-tokens "1000000000000unolus,
-                        1000000000000ibc/0954E1C28EB7AF5B72D24F3BC2B47BBB2FDF91BDDFD57B74B99E133AED40972A,
-                        1000000000000ibc/0EF15DF2F02480ADE0BB6E85D9EBB5DAEA2836D3860E9F97F9AADE4F57A31AA0,
-                        1000000000000ibc/8A34AF0C1943FD0DFCDE9ADBF0B2C9959C45E87E6088EA2FC6ADACD59261B8A2"
+              --chain-id nolus-dev-1 -v 3 --validator-accounts-dir "$ACCOUNTS_DIR"
+              --wasm-script-path "artifacts" --wasm-code-path "artifacts"
+              --wasm-admin-addr "$SMART_CONTRACTS_ADMIN_ADDR"
+              --treasury-nls-u128 "1000000000000"
               --faucet-mnemonic "$FAUCET_MNEMONIC_DEV"
-              --faucet-tokens "$FAUCET_TOKENS_DEV" ;
+              --faucet-tokens "$FAUCET_TOKENS_DEV"
+              --lpp-native "$STABLE_DENOM_DEV"
+              --contracts-info-file $CONTRACTS_INFO_FILE ;
+
       else
         echo "Skip preparation for deploy since this is not a new version build" ;
       fi
   artifacts:
-    name: "accounts-$CI_COMMIT_REF_SLUG"
+    name: "dev-net-data-$CI_COMMIT_REF_SLUG"
     paths:
       - $ACCOUNTS_DIR
+      - $CONTRACTS_INFO_FILE

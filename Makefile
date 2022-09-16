@@ -82,6 +82,9 @@ endif
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
 	ldflags += -w -s
 endif
+ifeq ($(LINK_STATICALLY),true)
+	ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
 ldflags += $(LDFLAGS) 
 ldflags := $(strip $(ldflags))
 
@@ -101,6 +104,10 @@ endif
 
 ifneq (${WASMVM_DIR},)
 	export CGO_LDFLAGS=-L${WASMVM_DIR}
+endif
+
+ifeq (${GOROOT},)
+	export GOROOT=$(shell go env GOROOT)
 endif
 
 #$(info $$BUILD_FLAGS is [$(BUILD_FLAGS)])

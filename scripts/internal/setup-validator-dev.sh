@@ -34,6 +34,7 @@ deploy_validators() {
 #
 # The node ids and validator public keys are printed on the standard output one at a line.
 setup_validators() {
+  set -euo pipefail
   local validators_nb="$1"
 
   for i in $(seq "$validators_nb"); do
@@ -55,7 +56,7 @@ start_validators() {
   local validators_nb="$1"
 
   __do_cmd_services "$validators_nb" "start"
-} 
+}
 
 #
 # Return the node ids and validator public keys printed on the standard output delimited with a space.
