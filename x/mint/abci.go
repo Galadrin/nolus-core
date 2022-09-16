@@ -29,8 +29,7 @@ func calcFunctionIncrement(nanoSecondsPassed int64) sdk.Dec {
 }
 
 func calcFixedIncrement(nanoSecondsPassed int64) sdk.Dec {
-	timePassed := sdk.NewDec(nanoSecondsPassed).Quo(nanoSecondsInMonth)
-	return timePassed
+	return sdk.NewDec(nanoSecondsPassed).Quo(nanoSecondsInMonth)
 }
 
 func calcTimeDifference(blockTime int64, prevBlockTime int64, maxMintableSeconds int64) int64 {
