@@ -94,7 +94,7 @@ func Test_CalcTokensDuringFormula_WhenUsingVaryingIncrements_OutputExpectedToken
 	prevOffset := timeOffset
 	nanoSecondsInPeriod := (nanoSecondsInMonth.Mul(types.MonthsInFormula)).Add(sdk.NewDec(timeOffset)).TruncateInt64()
 	rand.Seed(time.Now().UnixNano())
-	monthThreshold := sdk.NewInt(187_500_000) // 100 tokens
+	monthThreshold := sdk.NewInt(187_500_000) // 187.5 tokens
 	month := 0
 	for i := int64(0); timeOffset < nanoSecondsInPeriod; {
 		i = randomTimeBetweenBlocks(5, 60)
