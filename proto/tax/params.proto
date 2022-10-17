@@ -1,9 +1,9 @@
 syntax = "proto3";
-package nomo.cosmzone.tax;
+package nomo.nolus-core.tax;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "gitlab-nomo.credissimo.net/nomo/cosmzone/x/tax/types";
+option go_package = "gitlab-nomo.credissimo.net/nomo/nolus-core/x/tax/types";
 
 // Params defines the parameters for the module.
 message Params {

@@ -1,4 +1,4 @@
-module gitlab-nomo.credissimo.net/nomo/cosmzone
+module gitlab-nomo.credissimo.net/nomo/nolus-core
 
 go 1.16
 
@@ -23,7 +23,6 @@ require (
 )
 
 replace (
-
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	// For more info https://github.com/cosmos/cosmos-sdk/releases/tag/v0.45.9
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
